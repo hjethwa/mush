@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lanluong.mush"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="13"
+        android:targetSdkVersion="18" />
+    
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    
+    <permission android:name="com.lanluong.mush.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.lanluong.mush.permission.C2D_MESSAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.lanluong.mush.MushMainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.lanluong.mush.selection.SelectionActivity">
+        </activity>
+        <activity
+            android:name="com.lanluong.mush.SendingActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true">
+        </activity>
+        <activity
+            android:name="com.lanluong.mush.SettingsActivity">
+            <!--  meta-data for back button in the action bar -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lanluong.mush.MushMainActivity" />
+        </activity>
+        <activity
+            android:name="com.lanluong.mush.HistoryActivity">
+            <!--  meta-data for back button in the action bar -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lanluong.mush.MushMainActivity" />
+        </activity>
+        
+        
+        <meta-data android:name="com.google.android.gms.version"
+           android:value="@integer/google_play_services_version" />
+        
+        <receiver
+            android:name=".gcm.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.hmkcode.android.gcm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".gcm.GcmMessageHandler" />
+    </application>
+
+</manifest>

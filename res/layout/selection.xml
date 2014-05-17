@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/selection_top_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/selection_contacts_image"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_launcher" />
+
+        <ImageView
+            android:id="@+id/selection_emoticons_image"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_launcher" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/selection_emoticons_linear_bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/selection_top_linear" >
+
+        <TabHost
+            android:id="@android:id/tabhost"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="horizontal" />
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0" >
+                </FrameLayout>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/tabviewpager"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </TabHost>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/selection_contacts_linear_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/selection_top_linear"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/selection_new_contacts_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:text="CHOOSE CONTACT"
+            android:textSize="20sp" />
+
+        <ListView
+            android:id="@+id/selection_contacts_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ff0" />
+    </LinearLayout>
+
+</RelativeLayout>
