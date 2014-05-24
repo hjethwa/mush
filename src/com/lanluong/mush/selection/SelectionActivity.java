@@ -136,8 +136,10 @@ public class SelectionActivity extends FragmentActivity implements
 		mContactList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> listView, View arg1, int position,
+					long rowId) {
+				ContactsListAdapter adapter = (ContactsListAdapter) listView.getAdapter();
+				mContactsImage.setImageBitmap(adapter.getMap().get(position));
 				contactSelected = true;
 				reloadScreen();
 			}
@@ -174,7 +176,10 @@ public class SelectionActivity extends FragmentActivity implements
 			case CONTACTS:
 				// Showing as if I just clicked an emoticon. So i was on
 				// selection.emoticons now going to contacts.
-				contactSelected = false;
+				contactSelected = false; 
+				// Talking about current selection. That because when onPause was called I was on CONTACTS so 
+				// contacts was not selected, it is now being selected.
+				//emoticonSelection is already true, check if condition above.
 				currentSelection = Selection.EMOTICONS;
 				previousSelection = Selection.CAUSE_ACTIVITY;
 				break;
@@ -456,7 +461,8 @@ public class SelectionActivity extends FragmentActivity implements
 						mLinearContactsBottom);
 				MushAnimationUtility.setAndStartImageFadeOutAnimation(this,
 						mEmoticonsImage);
-				readAndDisplayAllContacts();
+				new ContactsTask().execute();
+				//readAndDisplayAllContacts();
 				mActionBarTitle.setText("CHOOSE CONTACT");
 				break;
 			case EMOTICONS_CLICKED:
@@ -484,39 +490,46 @@ public class SelectionActivity extends FragmentActivity implements
 
 		
 	private class ContactsTask extends AsyncTask<Void, Void, Void>{
-
+		
+		private List<String> mArrayListTask = new ArrayList<String>();
+		private List<String> mIdListTask = new ArrayList<String>();
+		
 		@Override
 		protected Void doInBackground(Void... params) {
 			readAndDisplayAllContacts();
 			return null;
 		}
 		
-	}
-	private void readAndDisplayAllContacts() {
-		ArrayList<String> arrayList = new ArrayList<String>();
-		ArrayList<String> idList = new ArrayList<String>();
-		// Note Querying a different table here than for photo later in the adapter.
-		Cursor cursor = getContentResolver().query(
-				ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
-				null,
-				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-		while (cursor.moveToNext()) {
-			String name = cursor
-					.getString(cursor
-							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-			String phoneNumber = cursor
-					.getString(cursor
-							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-			arrayList.add(name + " - " + phoneNumber);
-			String id = cursor
-			.getString(cursor
-					.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_ID));
-			idList.add(id);
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			ContactsListAdapter adapter = new ContactsListAdapter(SelectionActivity.this,
+					R.layout.contacts_list_row, mArrayListTask, mIdListTask);
+			mContactList.setAdapter(adapter);
 		}
-		cursor.close();
-		ContactsListAdapter adapter = new ContactsListAdapter(this,
-				R.layout.contacts_list_row, arrayList, idList);
-		mContactList.setAdapter(adapter);
-
+		
+		private void readAndDisplayAllContacts() {
+			// Note Querying a different table here than for photo later in the adapter.
+			Cursor cursor = getContentResolver().query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+					null,
+					ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+			while (cursor.moveToNext()) {
+				String name = cursor
+						.getString(cursor
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+				String phoneNumber = cursor
+						.getString(cursor
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				mArrayListTask.add(name + " - " + phoneNumber);
+				String id = cursor
+				.getString(cursor
+						.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_ID));
+				mIdListTask.add(id);
+			}
+			cursor.close();
+		}
+		
 	}
+	
 }

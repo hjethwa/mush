@@ -1,22 +1,18 @@
 package com.lanluong.mush.selection;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
-import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +25,14 @@ import com.lanluong.mush.R;
 
 public class ContactsListAdapter extends ArrayAdapter<String> {
 
-	private ArrayList<String> mNamesList = new ArrayList<String>();
-	private ArrayList<String> mIdList = new ArrayList<String>();
+	private List<String> mNamesList = new ArrayList<String>();
+	private List<String> mIdList = new ArrayList<String>();
+	private Map<Integer, Bitmap> mBitmapMap = new HashMap<Integer, Bitmap>();
 	private int mLayoutResource;
 	private Context mContext;
 
 	public ContactsListAdapter(Context context, int resource,
-			ArrayList<String> namesList, ArrayList<String> idList) {
+			List<String> namesList, List<String> idList) {
 		super(context, resource, namesList);
 		mContext = context;
 		mNamesList = namesList;
@@ -62,7 +59,7 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 		}
 		holder.contactName.setText(mNamesList.get(position));
 		holder.contactImage.setImageResource(R.drawable.ic_launcher);
-		new PhotoTask(holder.contactImage).execute(mIdList.get(position));
+		new PhotoTask(holder.contactImage,position).execute(mIdList.get(position));
 		return row;
 	}
 
@@ -73,10 +70,13 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 
 	private class PhotoTask extends AsyncTask<String, Void, Bitmap> {
 
-		private WeakReference<ImageView> weakReferenceImage;
+		private WeakReference<ImageView> mWeakReferenceImage;
+		private WeakReference<Integer> mWeakReferencePosition;
+		//private int position;
 
-		public PhotoTask(ImageView imageView) {
-			weakReferenceImage = new WeakReference<ImageView>(imageView);
+		public PhotoTask(ImageView imageView, Integer position) {
+			mWeakReferenceImage = new WeakReference<ImageView>(imageView);
+			mWeakReferencePosition = new WeakReference<Integer>(position);
 		}
 
 		@Override
@@ -107,19 +107,24 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 				result = null;
 			}
 
-			if (weakReferenceImage != null) {
-				ImageView imageView = weakReferenceImage.get();
-				if (imageView != null) {
-
+			if (mWeakReferenceImage != null && mWeakReferencePosition != null) {
+				ImageView imageView = mWeakReferenceImage.get();
+				Integer pos = mWeakReferencePosition.get();
+				if (imageView != null && pos != null) {
 					if (result != null) {
 						imageView.setImageBitmap(result);
+						mBitmapMap.put(pos, result);
 					} else {
+						mBitmapMap.put(pos, BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_launcher));
 						imageView.setImageResource(R.drawable.ic_launcher);
 					}
 				}
-
 			}
 		}
 
+	}
+	
+	public Map<Integer,Bitmap> getMap(){
+		return mBitmapMap;
 	}
 }
