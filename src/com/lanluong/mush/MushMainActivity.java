@@ -31,7 +31,6 @@ public class MushMainActivity extends Activity {
 	private ImageButton mContactsImageButton;
 	private ImageButton mEmoticonsImageButton;
 	private ImageButton mSettingsImageButton;
-	private ImageButton mHistoryImageButton;
 	
 	private GoogleCloudMessaging mGcm;
 
@@ -69,15 +68,6 @@ public class MushMainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MushMainActivity.this, SettingsActivity.class);
-				startActivity(intent);
-			}
-		});
-		mHistoryImageButton = (ImageButton) findViewById(R.id.mush_main_history_image_button);
-		mHistoryImageButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MushMainActivity.this, HistoryActivity.class);
 				startActivity(intent);
 			}
 		});

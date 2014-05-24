@@ -1,14 +1,23 @@
 package com.lanluong.mush.selection;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +71,7 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 		TextView contactName;
 	}
 
-	private class PhotoTask extends AsyncTask<String, Void, Uri> {
+	private class PhotoTask extends AsyncTask<String, Void, Bitmap> {
 
 		private WeakReference<ImageView> weakReferenceImage;
 
@@ -71,40 +80,28 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 		}
 
 		@Override
-		protected Uri doInBackground(String... params) {
-			try {
-				Cursor cur = getContext()
-						.getContentResolver()
-						.query(ContactsContract.Data.CONTENT_URI,
-								null,
-								ContactsContract.Data.CONTACT_ID
-										+ "="
-										+ params[0]
-										+ " AND "
-										+ ContactsContract.Data.MIMETYPE
-										+ "='"
-										+ ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE
-										+ "'", null, null);
-				if (cur != null) {
-					if (!cur.moveToFirst()) {
-						return null; // no photo
-					}
-				} else {
-					return null; // error in cursor process
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
+		protected Bitmap doInBackground(String... params) {
+			// Note: This works. _ID for some reason would equal to PHOTO_ID as this a different table.
+	        ContentResolver cr = getContext().getContentResolver();
+	        Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI, new String[] {Photo.PHOTO},
+	        		ContactsContract.Data._ID
+					+ "="
+					+ params[0], null, null);
+	        final Bitmap photoBitmap;
+			if(cur.moveToFirst()) {
+				byte[] photoBlob = cur.getBlob(
+		        		cur.getColumnIndex(Photo.PHOTO));
+				photoBitmap = BitmapFactory.decodeByteArray(
+						photoBlob, 0, photoBlob.length);
+			} else {
+				photoBitmap = null;
 			}
-			Uri person = ContentUris.withAppendedId(
-					ContactsContract.Contacts.CONTENT_URI,
-					Long.parseLong(params[0]));
-			return Uri.withAppendedPath(person,
-					ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+			cur.close();
+			return photoBitmap;
 		}
 
 		@Override
-		protected void onPostExecute(Uri result) {
+		protected void onPostExecute(Bitmap result) {
 			super.onPostExecute(result);
 			if (isCancelled()) {
 				result = null;
@@ -115,7 +112,7 @@ public class ContactsListAdapter extends ArrayAdapter<String> {
 				if (imageView != null) {
 
 					if (result != null) {
-						imageView.setImageURI(result);
+						imageView.setImageBitmap(result);
 					} else {
 						imageView.setImageResource(R.drawable.ic_launcher);
 					}

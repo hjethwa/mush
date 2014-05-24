@@ -19,38 +19,24 @@
             android:id="@+id/mush_main_contacts_image_button"
             android:layout_width="125dp"
             android:layout_height="125dp"
-            android:background="#f00"
-            android:layout_margin="20dp" />
+            android:layout_margin="20dp"
+            android:background="#f00" />
 
         <ImageButton
             android:id="@+id/mush_main_emoticons_image_button"
             android:layout_width="125dp"
             android:layout_height="125dp"
-            android:background="#f00"
-            android:layout_margin="20dp" />
+            android:layout_margin="20dp"
+            android:background="#f00" />
     </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/mush_main_bottom_buttons_linear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal" >
-
-            <ImageButton
-                android:id="@+id/mush_main_settings_image_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="#f00" />
-
-            <ImageButton
-                android:id="@+id/mush_main_history_image_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="#f00" />
-        </LinearLayout>
+    <ImageButton
+        android:id="@+id/mush_main_settings_image_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="#f00" />
 
 </RelativeLayout>

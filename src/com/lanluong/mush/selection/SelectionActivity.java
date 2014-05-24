@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
@@ -37,7 +38,6 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
-import com.google.android.gms.internal.em;
 import com.lanluong.mush.MushAnimationUtility;
 import com.lanluong.mush.R;
 import com.lanluong.mush.SendingActivity;
@@ -50,7 +50,6 @@ public class SelectionActivity extends FragmentActivity implements
 	public static final String EMOTICONS_X = "EMOTICONS-X";
 	public static final String EMOTICONS_Y = "EMOTICONS-Y";
 	public static final String LINEAR_TOP_X = "LINEAR-TOP-X";
-	
 	
 	//Values used for intents and shared preferences
 	public static final String CONTACT_SELECTED = "CONTACT-SELECTED";
@@ -316,7 +315,7 @@ public class SelectionActivity extends FragmentActivity implements
 					mContactsImage);
 			mLinearContactsBottom.bringToFront();
 			mActionBarTitle.setText("CHOOSE CONTACT");
-			readAndDisplayAllContacts();
+			new ContactsTask().execute();
 			// TODO Nullify both the images up top.
 			break;
 
@@ -444,7 +443,7 @@ public class SelectionActivity extends FragmentActivity implements
 			previousSelection = currentSelection;
 			currentSelection = Selection.CONTACTS;
 			mActionBarTitle.setText("CHOOSE CONTACT");
-			readAndDisplayAllContacts();
+			new ContactsTask().execute();
 		} else {
 			switch (mClicked) {
 			case CONTACTS_CLICKED:
@@ -483,9 +482,20 @@ public class SelectionActivity extends FragmentActivity implements
 		}
 	}
 
+		
+	private class ContactsTask extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			readAndDisplayAllContacts();
+			return null;
+		}
+		
+	}
 	private void readAndDisplayAllContacts() {
 		ArrayList<String> arrayList = new ArrayList<String>();
 		ArrayList<String> idList = new ArrayList<String>();
+		// Note Querying a different table here than for photo later in the adapter.
 		Cursor cursor = getContentResolver().query(
 				ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
 				null,
@@ -499,10 +509,11 @@ public class SelectionActivity extends FragmentActivity implements
 							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 			arrayList.add(name + " - " + phoneNumber);
 			String id = cursor
-					.getString(cursor
-							.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID));
+			.getString(cursor
+					.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_ID));
 			idList.add(id);
 		}
+		cursor.close();
 		ContactsListAdapter adapter = new ContactsListAdapter(this,
 				R.layout.contacts_list_row, arrayList, idList);
 		mContactList.setAdapter(adapter);
