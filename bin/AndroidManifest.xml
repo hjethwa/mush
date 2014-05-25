@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.lanluong.mush.MushMainActivity"
+            android:name="com.harshal.mush.MushMainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,22 +33,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.lanluong.mush.selection.SelectionActivity">
+            android:name="com.harshal.mush.selection.SelectionActivity">
         </activity>
         <activity
-            android:name="com.lanluong.mush.SendingActivity"
+            android:name="com.harshal.mush.SendingActivity"
             android:configChanges="orientation|screenSize"
             android:excludeFromRecents="true">
         </activity>
         <activity
-            android:name="com.lanluong.mush.SettingsActivity">
+            android:name="com.harshal.mush.SettingsActivity">
             <!--  meta-data for back button in the action bar -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lanluong.mush.MushMainActivity" />
         </activity>
         <activity
-            android:name="com.lanluong.mush.HistoryActivity">
+            android:name="com.harshal.mush.HistoryActivity">
             <!--  meta-data for back button in the action bar -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -60,14 +60,14 @@
            android:value="@integer/google_play_services_version" />
         
         <receiver
-            android:name=".gcm.GcmBroadcastReceiver"
+            android:name="com.harshal.mush.gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.hmkcode.android.gcm" />
             </intent-filter>
         </receiver>
-        <service android:name=".gcm.GcmMessageHandler" />
+        <service android:name="com.harshal.mush.gcm.GcmMessageHandler" />
     </application>
 
 </manifest>
